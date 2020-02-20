@@ -17,13 +17,27 @@ export class HomeComponent implements OnInit, OnDestroy {
 
       setInterval(() => {
         observer.next(count);
+        if (count === 0) {
+          observer.complete();
+        }
+        if (count % 2 !== 0) {
+          observer.error(new Error('Not an even number'));
+        }
         count++;
       }, 1000);
     });
 
-    this.mySubscription = customIntervalObservable.subscribe(count => {
-      console.log(count);
-    });
+    this.mySubscription = customIntervalObservable.subscribe(
+      count => {
+        console.log(count);
+      },
+      error => {
+        console.log(error);
+      },
+      () => {
+        alert('Completed');
+      }
+    );
   }
 
   ngOnDestroy() {
