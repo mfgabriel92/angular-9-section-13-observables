@@ -1,5 +1,6 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Observable, Subscription } from 'rxjs';
+import { filter } from 'rxjs/operators';
 
 @Component({
   selector: 'app-home',
@@ -17,27 +18,33 @@ export class HomeComponent implements OnInit, OnDestroy {
 
       setInterval(() => {
         observer.next(count);
-        if (count === 0) {
-          observer.complete();
-        }
-        if (count % 2 !== 0) {
-          observer.error(new Error('Not an even number'));
-        }
+        // if (count === 0) {
+        //   observer.complete();
+        // }
+        // if (count % 2 !== 0) {
+        //   observer.error(new Error('Not an even number'));
+        // }
         count++;
       }, 1000);
     });
 
-    this.mySubscription = customIntervalObservable.subscribe(
-      count => {
-        console.log(count);
-      },
-      error => {
-        console.log(error);
-      },
-      () => {
-        alert('Completed');
-      }
-    );
+    this.mySubscription = customIntervalObservable
+      .pipe(
+        filter((data: number) => {
+          return data % 2 === 0;
+        })
+      )
+      .subscribe(
+        count => {
+          console.log(count);
+        },
+        error => {
+          console.log(error);
+        },
+        () => {
+          alert('Completed');
+        }
+      );
   }
 
   ngOnDestroy() {
